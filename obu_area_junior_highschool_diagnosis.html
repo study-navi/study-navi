@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>大府エリア高校進路診断</title>
+  <style>
+    :root{
+      --navy:#17345c;
+      --blue:#2563eb;
+      --light:#f5f8ff;
+      --gold:#d8a928;
+      --red:#d94a4a;
+      --green:#2f9e64;
+      --gray:#667085;
+      --line:#d9e2f2;
+      --card:#ffffff;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",Meiryo,sans-serif;
+      background:linear-gradient(180deg,#eef5ff 0%,#ffffff 42%,#f7fbff 100%);
+      color:#1f2937;
+    }
+    header{
+      background:linear-gradient(135deg,var(--navy),#2f5f9d);
+      color:#fff;
+      padding:28px 18px 34px;
+      text-align:center;
+    }
+    header .badge{
+      display:inline-block;
+      background:rgba(255,255,255,.16);
+      border:1px solid rgba(255,255,255,.32);
+      padding:6px 12px;
+      border-radius:999px;
+      font-size:13px;
+      margin-bottom:12px;
+    }
+    h1{
+      margin:0;
+      font-size:26px;
+      line-height:1.35;
+      letter-spacing:.03em;
+    }
+    header p{
+      margin:10px auto 0;
+      max-width:780px;
+      font-size:14px;
+      opacity:.92;
+      line-height:1.8;
+    }
+    .wrap{
+      width:min(1100px,94%);
+      margin:-22px auto 40px;
+    }
+    .panel{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:20px;
+      box-shadow:0 12px 30px rgba(21,52,92,.12);
+      overflow:hidden;
+    }
+    .tabs{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      border-bottom:1px solid var(--line);
+      background:#f8fbff;
+    }
+    .tab{
+      padding:14px 8px;
+      text-align:center;
+      font-weight:700;
+      font-size:14px;
+      color:var(--gray);
+      cursor:pointer;
+      border:0;
+      background:transparent;
+    }
+    .tab.active{
+      color:var(--navy);
+      background:#fff;
+      border-bottom:3px solid var(--gold);
+    }
+    .section{
+      display:none;
+      padding:22px;
+    }
+    .section.active{display:block}
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:16px;
+    }
+    .box{
+      background:var(--light);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+    }
+    label{
+      display:block;
+      font-weight:700;
+      margin-bottom:8px;
+      color:#253858;
+    }
+    input,select{
+      width:100%;
+      padding:12px 12px;
+      border:1px solid #cbd5e1;
+      border-radius:12px;
+      font-size:16px;
+      background:white;
+    }
+    .hint{
+      font-size:12px;
+      color:var(--gray);
+      margin-top:6px;
+      line-height:1.6;
+    }
+    .checks{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:8px;
+      margin-top:8px;
+    }
+    .checks label{
+      font-weight:600;
+      font-size:14px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px;
+      cursor:pointer;
+      margin:0;
+    }
+    .checks input{
+      width:auto;
+      margin-right:6px;
+    }
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:18px;
+    }
+    button.main{
+      background:linear-gradient(135deg,var(--blue),#1d4ed8);
+      color:#fff;
+      border:0;
+      border-radius:999px;
+      padding:13px 22px;
+      font-weight:800;
+      font-size:15px;
+      cursor:pointer;
+      box-shadow:0 8px 18px rgba(37,99,235,.25);
+    }
+    button.sub{
+      background:#fff;
+      color:var(--navy);
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:13px 18px;
+      font-weight:800;
+      font-size:15px;
+      cursor:pointer;
+    }
+    .resultTop{
+      display:none;
+      margin-top:20px;
+      background:#fffdf4;
+      border:1px solid #f2d675;
+      border-radius:18px;
+      padding:18px;
+    }
+    .resultTop h2{
+      margin:0 0 8px;
+      color:#7a5300;
+      font-size:20px;
+    }
+    .resultTop p{margin:0;line-height:1.8}
+    .cards{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+      margin-top:18px;
+    }
+    .school{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:16px;
+      box-shadow:0 8px 18px rgba(17,24,39,.06);
+      position:relative;
+    }
+    .school h3{
+      margin:0 0 6px;
+      font-size:18px;
+      color:var(--navy);
+    }
+    .tag{
+      display:inline-block;
+      padding:4px 9px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      margin:3px 4px 7px 0;
+      background:#edf2ff;
+      color:#244c99;
+    }
+    .tag.challenge{background:#fff0f0;color:#b42318}
+    .tag.recommend{background:#ecfdf3;color:#067647}
+    .tag.safe{background:#eff8ff;color:#175cd3}
+    .tag.compare{background:#fff8db;color:#8a6100}
+    .meta{
+      font-size:13px;
+      color:#344054;
+      line-height:1.8;
+      margin:8px 0;
+    }
+    .bar{
+      height:8px;
+      border-radius:999px;
+      background:#e5e7eb;
+      overflow:hidden;
+      margin:10px 0 8px;
+    }
+    .bar span{
+      display:block;
+      height:100%;
+      background:linear-gradient(90deg,#60a5fa,#2563eb);
+    }
+    .advice{
+      font-size:13px;
+      line-height:1.75;
+      background:#f8fafc;
+      border-radius:12px;
+      padding:10px;
+      margin-top:10px;
+    }
+    .school a{
+      color:#1d4ed8;
+      font-weight:800;
+      font-size:13px;
+      text-decoration:none;
+    }
+    .filters{
+      display:grid;
+      grid-template-columns:2fr 1fr 1fr;
+      gap:10px;
+      margin-bottom:16px;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      background:#fff;
+      border-radius:14px;
+      overflow:hidden;
+      border:1px solid var(--line);
+    }
+    th,td{
+      padding:11px 10px;
+      border-bottom:1px solid var(--line);
+      font-size:13px;
+      text-align:left;
+      vertical-align:top;
+    }
+    th{
+      background:#eef5ff;
+      color:#17345c;
+      font-weight:800;
+    }
+    .notice{
+      background:#f8fafc;
+      border-left:5px solid var(--navy);
+      padding:14px;
+      border-radius:12px;
+      line-height:1.8;
+      font-size:13px;
+      color:#475467;
+    }
+    .roadmap{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+      margin-top:14px;
+    }
+    .step{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+    }
+    .step b{color:var(--navy)}
+    footer{
+      text-align:center;
+      color:#667085;
+      font-size:12px;
+      padding:20px;
+      line-height:1.7;
+    }
+    @media(max-width:850px){
+      .grid,.cards,.roadmap{grid-template-columns:1fr}
+      .tabs{grid-template-columns:repeat(2,1fr)}
+      .filters{grid-template-columns:1fr}
+      h1{font-size:22px}
+      .section{padding:16px}
+      .checks{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="badge">大府エリア中学生向け｜高校進路診断 Lite</div>
+  <h1>内申・偏差値・通学・校風から<br>自分に合う高校候補を見つけよう</h1>
+  <p>大府市・東浦町・刈谷市・東海市・知多市・名古屋南部を中心に、面談で使いやすい形で高校候補を整理します。</p>
+</header>
+
+<div class="wrap">
+  <div class="panel">
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('diagnosis',this)">高校診断</button>
+      <button class="tab" onclick="showTab('list',this)">高校一覧</button>
+      <button class="tab" onclick="showTab('plan',this)">合格作戦</button>
+      <button class="tab" onclick="showTab('about',this)">注意点</button>
+    </div>
+
+    <section id="diagnosis" class="section active">
+      <div class="grid">
+        <div class="box">
+          <label>9教科内申</label>
+          <input id="naishin" type="number" min="9" max="45" placeholder="例：32">
+          <div class="hint">9教科×5段階＝45点満点。中3の内申を目安に入力。</div>
+        </div>
+        <div class="box">
+          <label>模試偏差値</label>
+          <input id="hensachi" type="number" min="30" max="75" placeholder="例：55">
+          <div class="hint">分からない場合は定期テスト順位から仮入力でもOK。</div>
+        </div>
+        <div class="box">
+          <label>通学の希望</label>
+          <select id="commute">
+            <option value="near">近さ重視</option>
+            <option value="normal" selected>近さも内容も両方</option>
+            <option value="wide">多少遠くても高校内容重視</option>
+          </select>
+        </div>
+        <div class="box">
+          <label>高校で重視したいこと</label>
+          <select id="priority">
+            <option value="univ">大学進学</option>
+            <option value="balance" selected>勉強と部活の両立</option>
+            <option value="career">資格・就職・専門性</option>
+            <option value="creative">美術・デザイン・表現</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="box" style="margin-top:16px">
+        <label>興味のある分野</label>
+        <div class="checks">
+          <label><input type="checkbox" class="interest" value="普通科">普通科・大学進学</label>
+          <label><input type="checkbox" class="interest" value="商業">商業・資格</label>
+          <label><input type="checkbox" class="interest" value="工業">工業・ものづくり</label>
+          <label><input type="checkbox" class="interest" value="総合">総合学科</label>
+          <label><input type="checkbox" class="interest" value="美術">美術・デザイン</label>
+          <label><input type="checkbox" class="interest" value="部活">部活も頑張りたい</label>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="main" onclick="diagnose()">診断する</button>
+        <button class="sub" onclick="resetForm()">リセット</button>
+      </div>
+
+      <div id="resultTop" class="resultTop">
+        <h2 id="resultTitle"></h2>
+        <p id="resultComment"></p>
+      </div>
+      <div id="results" class="cards"></div>
+    </section>
+
+    <section id="list" class="section">
+      <div class="filters">
+        <input id="search" oninput="renderTable()" placeholder="高校名・地域・学科で検索">
+        <select id="typeFilter" onchange="renderTable()">
+          <option value="">全学科</option>
+          <option value="普通科">普通科</option>
+          <option value="総合">総合</option>
+          <option value="商業">商業</option>
+          <option value="工業">工業</option>
+          <option value="美術">美術</option>
+        </select>
+        <select id="areaFilter" onchange="renderTable()">
+          <option value="">全エリア</option>
+          <option value="大府">大府周辺</option>
+          <option value="刈谷">刈谷方面</option>
+          <option value="知多">知多方面</option>
+          <option value="名古屋南部">名古屋南部</option>
+        </select>
+      </div>
+      <div style="overflow:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>高校</th><th>エリア</th><th>学科</th><th>目安</th><th>特徴</th><th>公式確認</th>
+            </tr>
+          </thead>
+          <tbody id="schoolTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="plan" class="section">
+      <div class="notice">
+        志望校を決めるときは「今行けそうな高校」だけでなく、「あと何を伸ばせば届くか」まで見ると面談で使いやすくなります。
+      </div>
+      <div class="roadmap">
+        <div class="step"><b>中1〜中2</b><br>英語・数学の基礎を固める。提出物と小テストで内申を落とさない。</div>
+        <div class="step"><b>中3春〜夏</b><br>5教科の苦手単元を一周。志望校を3段階で設定する。</div>
+        <div class="step"><b>中3秋〜冬</b><br>過去問・予想問題で時間配分を練習。内申確保と当日点アップを両立。</div>
+      </div>
+    </section>
+
+    <section id="about" class="section">
+      <div class="notice">
+        このアプリの内申・偏差値は面談用の目安です。年度、学科、倍率、推薦・特色選抜、校内順位決定方式により必要ラインは変わります。最終判断は必ず愛知県教育委員会・各高校公式サイト・学校の進路指導で確認してください。
+      </div>
+    </section>
+  </div>
+</div>
+
+<footer>
+  大府エリア高校進路診断 Lite｜スクール面談・進路相談用たたき台<br>
+  ※このHTMLは単体で動作します。CodePen / GitHub Pages / スマホブラウザでも利用可能。
+</footer>
+
+<script>
+const schools = [
+  {name:"大府高校", area:"大府", type:"普通科", minN:31, minH:53, tags:["普通科","部活"], feature:"大府市から通いやすく、勉強と部活の両立を目指しやすい。", link:"https://www.google.com/search?q=大府高校+公式"},
+  {name:"大府東高校", area:"大府", type:"普通科", minN:27, minH:48, tags:["普通科","部活"], feature:"地元から通いやすく、基礎固めから高校生活を安定させたい生徒向き。", link:"https://www.google.com/search?q=大府東高校+公式"},
+  {name:"東浦高校", area:"大府", type:"普通科", minN:24, minH:45, tags:["普通科"], feature:"大府・東浦方面から検討しやすい。まず高校生活を安定させたい生徒向き。", link:"https://www.google.com/search?q=東浦高校+公式"},
+  {name:"刈谷北高校", area:"刈谷", type:"普通科", minN:38, minH:62, tags:["普通科","大学進学"], feature:"大学進学を強く意識する生徒向き。内申・当日点ともに高い水準が必要。", link:"https://www.google.com/search?q=刈谷北高校+公式"},
+  {name:"刈谷高校", area:"刈谷", type:"普通科", minN:41, minH:67, tags:["普通科","大学進学"], feature:"難関大学進学を視野に入れる上位層向き。早期から高得点力が必要。", link:"https://www.google.com/search?q=刈谷高校+公式"},
+  {name:"知立東高校", area:"刈谷", type:"普通科", minN:34, minH:57, tags:["普通科","大学進学"], feature:"刈谷方面で進学重視の比較候補にしやすい。", link:"https://www.google.com/search?q=知立東高校+公式"},
+  {name:"横須賀高校", area:"知多", type:"普通科", minN:37, minH:61, tags:["普通科","大学進学"], feature:"知多方面の進学校候補。学習習慣と応用力が重要。", link:"https://www.google.com/search?q=横須賀高校+公式"},
+  {name:"半田高校", area:"知多", type:"普通科", minN:40, minH:65, tags:["普通科","大学進学"], feature:"知多地域の上位進学校候補。高い内申と当日点が必要。", link:"https://www.google.com/search?q=半田高校+公式"},
+  {name:"半田東高校", area:"知多", type:"普通科", minN:32, minH:54, tags:["普通科","部活"], feature:"進学と高校生活のバランスを取りたい生徒の比較候補。", link:"https://www.google.com/search?q=半田東高校+公式"},
+  {name:"知多翔洋高校", area:"知多", type:"総合", minN:28, minH:49, tags:["総合","部活"], feature:"総合学科。将来の方向性を高校で広げたい生徒向き。", link:"https://www.google.com/search?q=知多翔洋高校+公式"},
+  {name:"東海樟風高校", area:"知多", type:"商業", minN:24, minH:44, tags:["商業","資格"], feature:"商業・情報・資格取得に関心がある生徒の候補。", link:"https://www.google.com/search?q=東海樟風高校+公式"},
+  {name:"半田商業高校", area:"知多", type:"商業", minN:25, minH:45, tags:["商業","資格"], feature:"商業・資格・就職や専門進学を考える生徒向き。", link:"https://www.google.com/search?q=半田商業高校+公式"},
+  {name:"半田工科高校", area:"知多", type:"工業", minN:23, minH:43, tags:["工業","資格"], feature:"ものづくり・工業系に興味がある生徒向き。", link:"https://www.google.com/search?q=半田工科高校+公式"},
+  {name:"名古屋南高校", area:"名古屋南部", type:"普通科", minN:35, minH:58, tags:["普通科","大学進学"], feature:"名古屋南部方面で進学を意識した候補。", link:"https://www.google.com/search?q=名古屋南高校+公式"},
+  {name:"緑高校", area:"名古屋南部", type:"普通科", minN:31, minH:53, tags:["普通科","部活"], feature:"名古屋南部から通学候補。バランス型の高校生活を目指しやすい。", link:"https://www.google.com/search?q=緑高校+公式"},
+  {name:"鳴海高校", area:"名古屋南部", type:"普通科", minN:27, minH:48, tags:["普通科"], feature:"基礎力を固めながら高校生活を安定させたい生徒の比較候補。", link:"https://www.google.com/search?q=鳴海高校+公式"},
+  {name:"名古屋市立工芸高校", area:"名古屋南部", type:"美術", minN:30, minH:52, tags:["美術","デザイン"], feature:"美術・デザイン・ものづくりに関心がある生徒の候補。", link:"https://www.google.com/search?q=名古屋市立工芸高校+公式"}
+];
+
+function showTab(id,btn){
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  btn.classList.add("active");
+  if(id==="list") renderTable();
+}
+
+function getInterests(){
+  return [...document.querySelectorAll(".interest:checked")].map(x=>x.value);
+}
+
+function diagnose(){
+  const n = Number(document.getElementById("naishin").value);
+  const h = Number(document.getElementById("hensachi").value);
+  const commute = document.getElementById("commute").value;
+  const priority = document.getElementById("priority").value;
+  const interests = getInterests();
+  if(!n || !h){
+    alert("内申点と偏差値を入力してください。");
+    return;
+  }
+  const scored = schools.map(s=>{
+    let score = 100;
+    score -= Math.abs(n - s.minN) * 5.2;
+    score -= Math.abs(h - s.minH) * 2.8;
+    if(commute==="near" && (s.area==="大府")) score += 16;
+    if(commute==="wide" && s.tags.includes("大学進学")) score += 8;
+    if(priority==="univ" && s.tags.includes("大学進学")) score += 16;
+    if(priority==="balance" && s.tags.includes("部活")) score += 10;
+    if(priority==="career" && (s.tags.includes("資格") || s.type==="商業" || s.type==="工業")) score += 18;
+    if(priority==="creative" && (s.tags.includes("美術") || s.tags.includes("デザイン"))) score += 20;
+    interests.forEach(i=>{
+      if(s.tags.join("").includes(i) || s.type.includes(i)) score += 8;
+      if(i==="普通科" && s.type==="普通科") score += 8;
+      if(i==="部活" && s.tags.includes("部活")) score += 6;
+    });
+    let diff = ((n - s.minN)*2) + (h - s.minH);
+    let category = "比較候補";
+    if(diff >= 8) category = "安全校";
+    else if(diff >= -4) category = "おすすめ";
+    else if(diff >= -12) category = "チャレンジ校";
+    else category = "かなり挑戦";
+    return {...s, score:Math.max(0,Math.min(100,Math.round(score))), category, diff};
+  }).sort((a,b)=>b.score-a.score).slice(0,9);
+
+  const top = scored[0];
+  document.getElementById("resultTop").style.display = "block";
+  document.getElementById("resultTitle").textContent = `診断結果：${top.name} などが候補に入りやすいです`;
+  document.getElementById("resultComment").textContent =
+    `現在の入力では「${top.category}」として ${top.name} が最上位候補です。ただし、内申・当日点・倍率で変動します。チャレンジ校・現実校・安全校をセットで考えましょう。`;
+
+  const el = document.getElementById("results");
+  el.innerHTML = scored.map(s=>cardHTML(s)).join("");
+}
+
+function cardHTML(s){
+  const cls = s.category.includes("チャレンジ") || s.category.includes("挑戦") ? "challenge" :
+              s.category==="おすすめ" ? "recommend" :
+              s.category==="安全校" ? "safe" : "compare";
+  const advice = makeAdvice(s);
+  return `
+    <div class="school">
+      <span class="tag ${cls}">${s.category}</span>
+      <h3>${s.name}</h3>
+      <span class="tag">${s.area}</span><span class="tag">${s.type}</span>
+      <div class="meta">
+        内申目安：${s.minN}前後 ／ 偏差値目安：${s.minH}前後<br>
+        適合度
+      </div>
+      <div class="bar"><span style="width:${s.score}%"></span></div>
+      <div class="meta">${s.score}%</div>
+      <div class="advice">${advice}</div>
+      <p><a href="${s.link}" target="_blank" rel="noopener">公式情報を確認する</a></p>
+    </div>`;
+}
+
+function makeAdvice(s){
+  if(s.category==="安全校") return "現状では候補に入りやすい位置です。油断せず、内申維持と苦手単元の穴埋めを進めましょう。";
+  if(s.category==="おすすめ") return "現実的な候補です。定期テストの取りこぼしを減らし、模試で安定点を取れるようにしましょう。";
+  if(s.category==="チャレンジ校") return "挑戦候補です。英数の基礎ミス削減と、理社の暗記完成度を上げることが重要です。";
+  if(s.category==="かなり挑戦") return "今後の伸び次第の候補です。まずは内申＋2〜4、模試偏差値＋5を短期目標にしましょう。";
+  return "比較候補です。校風・通学・進学実績・部活を見比べて判断しましょう。";
+}
+
+function renderTable(){
+  const q = (document.getElementById("search").value || "").toLowerCase();
+  const type = document.getElementById("typeFilter").value;
+  const area = document.getElementById("areaFilter").value;
+  const rows = schools.filter(s=>{
+    const text = `${s.name} ${s.area} ${s.type} ${s.feature} ${s.tags.join(" ")}`.toLowerCase();
+    return (!q || text.includes(q)) && (!type || s.type.includes(type) || s.tags.includes(type)) && (!area || s.area===area);
+  });
+  document.getElementById("schoolTable").innerHTML = rows.map(s=>`
+    <tr>
+      <td><b>${s.name}</b></td>
+      <td>${s.area}</td>
+      <td>${s.type}</td>
+      <td>内申 ${s.minN}前後<br>偏差値 ${s.minH}前後</td>
+      <td>${s.feature}</td>
+      <td><a href="${s.link}" target="_blank" rel="noopener">確認</a></td>
+    </tr>
+  `).join("");
+}
+
+function resetForm(){
+  document.getElementById("naishin").value="";
+  document.getElementById("hensachi").value="";
+  document.querySelectorAll(".interest").forEach(x=>x.checked=false);
+  document.getElementById("resultTop").style.display="none";
+  document.getElementById("results").innerHTML="";
+}
+renderTable();
+</script>
+</body>
+</html>
